@@ -1,3 +1,7 @@
+import peewee
+from SQLConnector import *
+from UserModel import *
+
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
@@ -23,6 +27,11 @@ class MainWindow(App):
 
     def onClickRegButton(instance, self):
         print("Произошла регистрация")
+        Connector = SQLConnector("root", "root", "AuthPy", "localhost")
+        Connector.connect()
+        u = UserModel('alexey','12345','55555',False)
+        u.save()
+
 
     def onClickAuthButton(instance, self):
         print("Произошла аутентификация")
