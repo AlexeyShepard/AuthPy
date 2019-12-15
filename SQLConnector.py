@@ -1,4 +1,6 @@
+from sqlalchemy.orm import sessionmaker
 from sqlalchemy import *
+from sqlalchemy.exc import *
 from UserModel import *
 
 class SQLConnector:
@@ -6,7 +8,8 @@ class SQLConnector:
     password = 'root'
     db_name = 'AuthPy'
     host = 'localhost'
-    sqlEngine = create_engine("mysql://root:root@localhost/AuthPy");
+    sqlEngine = create_engine("mysql://mysql:mysql@localhost/AuthPy");
+    session = None
 
     def __init__(self, user, password, db_name, host):
         self.user = user
@@ -18,12 +21,22 @@ class SQLConnector:
 
     def connect(self):
         try:
-            self.sqlEngine.connect()
+            Session = sessionmaker()
+            Session.configure(bind=self.sqlEngine)
+            self.session = Session()
             print('Подключение установлено!')
-        except exc.InternalError as ex:
-            print(str(ex))
+        except Exception as ex:
+            print("Произошла ошибка " + str(ex))
 
     def insertUser(self, login, password, pincode, confirm):
-        ins = user.insert().values(Login=login, Password=password, Pincode=pincode, Confirm=confirm)
-        result = self.sqlEngine.execute(ins)
-        print(result)
+        self.connect()
+        userToAdd = User(Login=login, Password=password, Pincode=pincode, Confirm=confirm)
+        self.session.add(userToAdd)
+        self.session.commit()
+        print('Регистрация прошла успешно!')
+
+    def selectUser(self, login, password, pincode):
+        self.connect()
+        selectedUser = self.session.query(User).filter(User.Login == login).filter(User.Password == password).filter(User.Pincode == pincode).first()
+        print(selectedUser)
+        return selectedUser

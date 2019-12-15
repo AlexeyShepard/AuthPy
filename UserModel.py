@@ -1,11 +1,17 @@
 from sqlalchemy import *
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
 
-metadata = MetaData()
+Base = declarative_base()
 
-user = Table('user', metadata,
-    Column('Id', Integer, primary_key=True),
-    Column('Login', String(200), nullable=False),
-    Column('Password', String(200), nullable=False),
-    Column('Pincode', String(6), nullable=False),
-    Column('Confirm', Boolean, nullable=False)
-    )
+class User(Base):
+    __tablename__ = "user"
+
+    Id = Column(Integer, primary_key=True)
+    Login = Column(String(200))
+    Password = Column(String(200))
+    Pincode = Column(String(6))
+    Confirm = Column(Boolean)
+
+    def __repr__(self):
+        return "<user(Login='%s', Password='%s', Pincode='%s', Confirm='%s')>" % (self.Login, self.Password, self.Pincode, self.Confirm)
