@@ -1,6 +1,5 @@
-import peewee
+from sqlalchemy import *
 from SQLConnector import *
-from UserModel import *
 
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
@@ -29,8 +28,7 @@ class MainWindow(App):
         print("Произошла регистрация")
         Connector = SQLConnector("root", "root", "AuthPy", "localhost")
         Connector.connect()
-        u = UserModel('alexey','12345','55555',False)
-        u.save()
+        Connector.insertUser('alexey', 'P@ssw0rd', '12345', False)
 
 
     def onClickAuthButton(instance, self):

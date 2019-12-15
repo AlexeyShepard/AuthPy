@@ -1,11 +1,12 @@
-from peewee import *
+from sqlalchemy import *
+from UserModel import *
 
 class SQLConnector:
     user = 'root'
     password = 'root'
     db_name = 'AuthPy'
     host = 'localhost'
-    dbhandle = MySQLDatabase(db_name)
+    sqlEngine = create_engine("mysql://root:root@localhost/AuthPy");
 
     def __init__(self, user, password, db_name, host):
         self.user = user
@@ -13,16 +14,16 @@ class SQLConnector:
         self.db_name = db_name
         self.host = host
 
-        self.dbhandle = MySQLDatabase(
-            db_name,
-            user=user,
-            password=password,
-            host=host
-        )
+        self.sqlEngine = create_engine("mysql://" + self.user + ":" + self.password + "@" + host + "/" + db_name)
 
     def connect(self):
         try:
-            self.dbhandle.connect()
+            self.sqlEngine.connect()
             print('Подключение установлено!')
-        except InternalError as ex:
+        except exc.InternalError as ex:
             print(str(ex))
+
+    def insertUser(self, login, password, pincode, confirm):
+        ins = user.insert().values(Login=login, Password=password, Pincode=pincode, Confirm=confirm)
+        result = self.sqlEngine.execute(ins)
+        print(result)
